@@ -25,11 +25,40 @@ public class SetupTest {
     }
 
     @Test
-    public void playAudio() throws LineUnavailableException, IOException, UnsupportedAudioFileException {
+    public void playAudio() throws LineUnavailableException, IOException, UnsupportedAudioFileException, InterruptedException {
         final List<Path> list = FileCollector.allFilesFrom("src/test/resources");
         final Clip clip = AudioSystem.getClip();
-        clip.open(AudioSystem.getAudioInputStream(list.get(0).toFile()));
+        clip.open(AudioSystem.getAudioInputStream(list.get(1).toFile()));
+        clip.addLineListener(new LineListener() {
+
+            @Override
+            public void update(LineEvent event) {
+                System.out.println(event.getType());
+                if (event.getType()==LineEvent.Type.STOP){
+                    synchronized(clip){
+                        clip.notifyAll();
+                    }
+                    System.err.println("STOP!");
+                }
+            }
+        });
         clip.start();
+        while (true){
+            synchronized(clip){
+                clip.wait();
+            }
+            if (!clip.isRunning()){
+                break;
+            }
+        }
+    }
+
+    @Test
+    public void playCommand() throws Exception {
+        final List<Path> list = FileCollector.allFilesFrom("src/test/resources");
+        final List<Command> audioFiles = createCommands(list);
+        final Command command = audioFiles.get(1);
+        command.start();
     }
 
     @Test
@@ -37,8 +66,8 @@ public class SetupTest {
         final List<Path> list = FileCollector.allFilesFrom("src/test/resources");
         final List<Command> audioFiles = createCommands(list);
         final ArnisCoach arnisCoach = new ArnisCoach("test", audioFiles);
+        arnisCoach.setDelayInSec(2);
         arnisCoach.start();
-
     }
 
     private List<Command> createCommands(List<Path> audioFiles) throws Exception {
@@ -77,16 +106,15 @@ public class SetupTest {
         public void run() {
             System.out.println("start coach");
             while (shoutCommands) {
-                final Command command = chooseRandomClip();
+//                final Command command = chooseRandomClip();
+                System.out.println("start command");
+//                command.start();
                 try {
-                    System.out.println("start command");
-                    command.execute();
-                    System.out.println("stop command");
+                    sleep(delayInSec * 1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-
-
+                System.out.println("stop command");
             }
             System.out.println("stop coach");
 
@@ -94,7 +122,7 @@ public class SetupTest {
     }
 
 
-    private class Command {
+    private class Command extends Thread {
         private final Path audioFile;
         private final Clip clip;
         private final AudioListener audioListener;
@@ -112,26 +140,36 @@ public class SetupTest {
             clip.addLineListener(audioListener);
         }
 
-
-        public void execute() throws InterruptedException {
+        @Override
+        public void run() {
+            try {
                 clip.start();
+                Thread.currentThread().sleep(clip.getMicrosecondLength());
                 audioListener.waitUntilDone();
-                clip.stop();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            clip.stop();
         }
     }
 
 
     private class AudioListener implements LineListener {
         private boolean done = false;
+
+
         @Override public synchronized void update(LineEvent event) {
             LineEvent.Type eventType = event.getType();
             if (eventType == LineEvent.Type.STOP || eventType == LineEvent.Type.CLOSE) {
+                System.out.println("done");
                 done = true;
                 notifyAll();
             }
         }
         public synchronized void waitUntilDone() throws InterruptedException {
-            while (!done) { wait(); }
+            while (!done) {
+                System.out.println("wait");
+                wait(); }
         }
     }
 }

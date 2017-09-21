@@ -11,7 +11,8 @@ public class FileCollector {
 
     public static List<Path> allFilesFrom(String resourceDirectory) throws IOException {
         Path resourceDirectoryPaths = Paths.get(resourceDirectory);
-        return Files.list(resourceDirectoryPaths).collect(Collectors.toList());
+        System.out.println(resourceDirectoryPaths.toAbsolutePath());
+        return Files.list(resourceDirectoryPaths.toAbsolutePath()).collect(Collectors.toList());
     }
 
 }
