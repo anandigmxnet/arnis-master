@@ -1,8 +1,12 @@
 package arniscoach;
 
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
+
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 
 public class ArnisCoach extends Thread {
 
@@ -31,9 +35,15 @@ public class ArnisCoach extends Thread {
         System.out.println("start coach");
         while (shoutCommands) {
             final Command command = chooseRandomClip();
-            command.play();
-            try{
+            try {
+                command.play();
                 Thread.sleep(delayInSec * 1000);
+            } catch (LineUnavailableException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (UnsupportedAudioFileException e) {
+                e.printStackTrace();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

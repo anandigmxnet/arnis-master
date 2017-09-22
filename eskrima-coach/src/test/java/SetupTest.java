@@ -15,6 +15,8 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 import org.junit.Test;
 
 import arniscoach.FileCollector;
+import kuusisto.tinysound.Sound;
+import kuusisto.tinysound.TinySound;
 
 public class SetupTest {
 
@@ -22,6 +24,23 @@ public class SetupTest {
     public void readFiles() throws IOException {
         final List<Path> list = FileCollector.allFilesFrom("src/test/resources");
         list.forEach(path -> System.out.println(path.getFileName()));
+    }
+
+    @Test
+    public void tinysound() throws IOException, InterruptedException {
+        final List<Path> list = FileCollector.allFilesFrom("src/test/resources");
+        TinySound.init();
+        //load a sound and music
+        //note: you can also load with Files, URLs and InputStreams
+        Sound coin = TinySound.loadSound(list.get(0).toFile());
+//        Music coin = TinySound.loadMusic(list.get(0).toFile());
+        System.out.println("start command");
+        coin.play();
+//        Thread.sleep(3000);
+        System.out.println("stop command");
+
+        //be sure to shutdown TinySound when done
+        TinySound.shutdown();
     }
 
     @Test
