@@ -1,15 +1,11 @@
 package arniscoach;
 
+import java.io.IOException;
+
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
 
 public class ArnisCoach extends Thread {
-
 
     private int delayInSec = 1;
     private boolean shoutCommands = true;

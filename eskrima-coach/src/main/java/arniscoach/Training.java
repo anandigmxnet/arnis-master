@@ -11,7 +11,7 @@ public class Training {
     public void startTraining() throws Exception {
         //Program program = new SinawaliTraining();
         //Program program = new NumberTraining();
-        Program program = new NumberTraining(DALAWA, TATLO, ANIM, SHIAM, PITO);
+        Program program = new OneToTenCountTraining(DALAWA, TATLO, ANIM, SHIAM, PITO);
         ArnisCoach arnisCoach = new ArnisCoach(program);
         arnisCoach.setPauseBetweenCommandsInSec(1);
         arnisCoach.start();

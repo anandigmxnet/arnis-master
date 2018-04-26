@@ -1,15 +1,15 @@
 package arniscoach;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
 import static arniscoach.CommandFactory.toCommands;
 import static arniscoach.CommandType.NUMBERS;
 import static arniscoach.FileCollector.allFilesFrom;
 import static java.lang.String.format;
 
-public class NumberTraining implements Program {
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+public class OneToTenCountTraining implements Program {
 
     private String name = "Number";
 
@@ -21,16 +21,16 @@ public class NumberTraining implements Program {
 
     private Random random = new Random();
 
-    public NumberTraining() throws Exception {
-        prepare();
+    public OneToTenCountTraining() throws Exception {
+        loadAllNumberCommands();
     }
 
-    public NumberTraining(Numbers... numbers) throws Exception {
-        prepare();
-        filterCommandsFor(numbers);
+    public OneToTenCountTraining(Numbers... numbers) throws Exception {
+        loadAllNumberCommands();
+        loadCommandsFor(numbers);
     }
 
-    private void filterCommandsFor(Numbers[] numbers) {
+    private void loadCommandsFor(Numbers[] numbers) {
         final List<Command> newCommands = new ArrayList<>();
         for (Numbers number : numbers) {
             newCommands.add(findFor(number));
@@ -48,7 +48,7 @@ public class NumberTraining implements Program {
         throw new IllegalArgumentException(format("Command for %s not found.", number.name()));
     }
 
-    private void prepare() throws Exception {
+    private void loadAllNumberCommands() throws Exception {
         if (commands == null) {
             commands = new ArrayList<>();
             commands.addAll(toCommands(NUMBERS, allFilesFrom(NUMBERS.getCommandFolder())));
