@@ -1,8 +1,6 @@
 package arniscoach;
 
-import java.nio.file.Path;
-import java.util.LinkedList;
-import java.util.List;
+import static arniscoach.Numbers.*;
 
 public class Training {
 
@@ -11,20 +9,11 @@ public class Training {
     }
 
     public void startTraining() throws Exception {
-        final List<Path> list = FileCollector.allFilesFrom("/home/andre/projects/arnis-master/eskrima-coach/src/main/resources");
-        final List<Command> commands = createCommands(list);
-        ArnisCoach arnisCoach = new ArnisCoach("Andre", commands);
-        arnisCoach.setDelayInSec(2);
+        //Program program = new SinawaliTraining();
+        //Program program = new NumberTraining();
+        Program program = new NumberTraining(DALAWA, TATLO, ANIM, SHIAM, PITO);
+        ArnisCoach arnisCoach = new ArnisCoach(program);
+        arnisCoach.setPauseBetweenCommandsInSec(1);
         arnisCoach.start();
     }
-
-    private List<Command> createCommands(List<Path> audioFiles) throws Exception {
-        final List<Command> commands = new LinkedList<>();
-        for (Path audioFile : audioFiles) {
-            Command command = new Command(audioFile);
-            commands.add(command);
-        }
-        return commands;
-    }
-
 }

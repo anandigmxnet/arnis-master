@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/eskrima-coach.iml" filepath="$PROJECT_DIR$/eskrima-coach.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/eskrima-coach_main.iml" filepath="$PROJECT_DIR$/.idea/modules/eskrima-coach_main.iml" group="eskrima-coach" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/eskrima-coach_test.iml" filepath="$PROJECT_DIR$/.idea/modules/eskrima-coach_test.iml" group="eskrima-coach" />
+    </modules>
+  </component>
+</project>

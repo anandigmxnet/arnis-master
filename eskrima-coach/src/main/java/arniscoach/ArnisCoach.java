@@ -1,32 +1,26 @@
 package arniscoach;
 
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.UnsupportedAudioFileException;
-
 public class ArnisCoach extends Thread {
 
-    private List<Command> commands = new LinkedList<>();
 
-    private Random random = new Random();
     private int delayInSec = 1;
     private boolean shoutCommands = true;
+    private Program program;
 
-    public ArnisCoach(String name, List<Command> commands) {
-        super(name);
-        this.commands = commands;
+    public ArnisCoach(Program program) {
+        super(program.getName());
+        this.program = program;
     }
 
-    private Command chooseRandomClip() {
-        int randomIndex = random.nextInt(commands.size());
-        return commands.get(randomIndex);
-    }
-
-    public void setDelayInSec(int delayInSec) {
+    public void setPauseBetweenCommandsInSec(int delayInSec) {
         this.delayInSec = delayInSec;
     }
 
@@ -34,7 +28,7 @@ public class ArnisCoach extends Thread {
     public void run() {
         System.out.println("start coach");
         while (shoutCommands) {
-            final Command command = chooseRandomClip();
+            final Command command = program.getNext();
             try {
                 command.play();
                 Thread.sleep(delayInSec * 1000);

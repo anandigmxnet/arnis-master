@@ -1,25 +1,22 @@
 package arniscoach;
 
+import javax.sound.sampled.*;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
-import javax.sound.sampled.LineEvent;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.UnsupportedAudioFileException;
-
 public class Command {
+    private String name;
+    private final CommandType commandType;
     private final Path audioFile;
-
     private final CyclicBarrier barrier = new CyclicBarrier(2);
 
-    Command(Path audioFile) throws Exception {
+    Command(String name, CommandType commandType, Path audioFile) throws Exception {
+        this.name = name;
+        this.commandType = commandType;
         this.audioFile = audioFile;
     }
-
 
     public void play() throws LineUnavailableException, IOException, UnsupportedAudioFileException, InterruptedException {
         Clip clip = AudioSystem.getClip();
@@ -28,8 +25,24 @@ public class Command {
         clip.start();
         waitForSoundEnd();
         clip.stop();
+        clip.drain();
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public int id() {
+      return audioFile.hashCode();
+    }
+
+    public CommandType getCommandType() {
+        return commandType;
+    }
+
+    private void waitForSoundEnd() {
+        waitOnBarrier();
+    }
 
     private void listenForEndOf(final Clip clip) {
         clip.addLineListener(event -> {
@@ -49,7 +62,8 @@ public class Command {
         }
     }
 
-    private void waitForSoundEnd() {
-        waitOnBarrier();
+    @Override
+    public boolean equals(Object obj) {
+        return ((Command)obj).id() == id();
     }
 }
